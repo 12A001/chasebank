@@ -57,7 +57,7 @@ export const useAuthStore = defineStore('auth', {
       try {
         this.loading = true
 
-        const { data } = await api.get('/user')
+       const { data } = await api.get('/api/user')
 
         // normalize safely
         this.user = data?.user || data?.data || data || null
@@ -89,8 +89,7 @@ export const useAuthStore = defineStore('auth', {
     ========================= */
     async updateProfile(payload) {
       try {
-        const { data } = await api.put('/user/profile', payload)
-
+const { data } = await api.put('/api/user/profile', payload)
         this.user = {
           ...this.user,
           ...data,
