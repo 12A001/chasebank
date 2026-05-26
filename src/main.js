@@ -5,7 +5,7 @@ import { useAuthStore } from '@/stores/authStore'
 
 import App from './App.vue'
 import router from './router'
-import './assets/main.css'
+import '/src/style.css'
 
 const app = createApp(App)
 
