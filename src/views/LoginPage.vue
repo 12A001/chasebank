@@ -262,9 +262,6 @@ localStorage.setItem('auth_token', data.token)
 
 auth.setUser(data.user)
 
-// IMPORTANT: wait next tick
-await auth.fetchUser()
-
 router.push('/dashboard')
 
   } catch (error) {
