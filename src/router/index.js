@@ -96,8 +96,7 @@ const router = createRouter({
 ========================= */
 
 router.beforeEach((to, from, next) => {
-  const token = localStorage.getItem('token')
-
+const token = localStorage.getItem('auth_token')
   // BLOCK ACCESS TO PROTECTED ROUTES
   if (to.meta.requiresAuth && !token) {
     return next('/login')
