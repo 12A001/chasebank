@@ -14,20 +14,31 @@
           </h1>
         </div>
 
-<div
-  @click="$router.push('/profile')"
-  class="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-[#0A4DB3] flex items-center justify-center overflow-hidden shadow-md cursor-pointer"
->
-  <img
-    v-if="auth.user?.profileImage"
-    :src="auth.user.profileImage"
-    class="w-full h-full object-cover"
-  />
+        <div
+          @click="$router.push('/profile')"
+          class="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-[#0A4DB3] flex items-center justify-center overflow-hidden shadow-md cursor-pointer"
+        >
+          <img
+            v-if="auth.user?.profileImage"
+            :src="auth.user.profileImage"
+            class="w-full h-full object-cover"
+          />
 
-  <span v-else class="text-white font-bold">
-    {{ initials }}
-  </span>
-</div>
+          <span v-else class="text-white font-bold">
+            {{ initials }}
+          </span>
+        </div>
+      </div>
+
+      <!-- FROZEN ACCOUNT ALERT -->
+      <div
+        v-if="auth.user?.isFrozen"
+        class="mx-4 mt-4 p-4 bg-red-100 border border-red-300 text-red-700 rounded-2xl"
+      >
+        <p class="font-bold">⚠️ Account Frozen</p>
+        <p class="text-sm mt-1">
+          {{ auth.user?.frozenReason || 'Your account is currently restricted.' }}
+        </p>
       </div>
 
       <!-- BALANCE CARD -->
@@ -72,7 +83,9 @@
             <!-- ADD MONEY BUTTON -->
             <button
               @click="handleAddMoney"
-              class="w-full sm:w-auto bg-white text-[#0A4DB3] px-5 py-3 sm:px-6 sm:py-4 rounded-2xl font-bold hover:scale-105 active:scale-95 transition-all shadow-lg text-sm sm:text-base"
+              :disabled="isFrozen"
+              :class="isFrozen ? 'opacity-50 cursor-not-allowed' : ''"
+              class="w-full sm:w-auto bg-white text-[#0A4DB3] px-5 py-3 rounded-2xl font-bold"
             >
               + Add Money
             </button>
@@ -86,7 +99,7 @@
           <button
             v-for="action in quickActions"
             :key="action.name"
-            @click="action.name === 'Transfer' && $router.push('/send')"
+            @click="action.action()"
             class="bg-white rounded-2xl py-4 sm:py-6 flex flex-col items-center justify-center shadow-sm border border-gray-100 hover:shadow-md active:scale-95 transition"
           >
             <component :is="action.icon" class="w-5 h-5 sm:w-7 sm:h-7 text-[#0A4DB3]" />
@@ -338,22 +351,12 @@ const getTransactionAccount = (tx) => {
 
   // RECEIVED → show sender
   if (tx.direction === 'received') {
-    return (
-      tx.senderAccountNumber ||
-      tx.fromAccountNumber ||
-      tx.accountNumber ||
-      ''
-    )
+    return tx.senderAccountNumber || tx.fromAccountNumber || tx.accountNumber || ''
   }
 
   // SENT → show receiver
   if (tx.direction === 'sent') {
-    return (
-      tx.receiverAccountNumber ||
-      tx.toAccountNumber ||
-      tx.accountNumber ||
-      ''
-    )
+    return tx.receiverAccountNumber || tx.toAccountNumber || tx.accountNumber || ''
   }
 
   return tx.accountNumber || ''
@@ -382,7 +385,7 @@ const showBalance = computed(() => auth.showBalance)
 const toggleBalance = () => {
   auth.toggleBalance()
 }
-
+const isFrozen = computed(() => auth.user?.isFrozen)
 /*
 |--------------------------------------------------------------------------
 | QUICK ACTIONS
@@ -390,11 +393,19 @@ const toggleBalance = () => {
 */
 
 const quickActions = [
-  { name: 'Transfer', icon: ArrowLeftRight },
-  { name: 'Airtime', icon: Smartphone },
-  { name: 'Bills', icon: Lightbulb },
-  { name: 'Scan QR', icon: QrCode },
+  { name: 'Transfer', icon: ArrowLeftRight, action: () => handleTransfer() },
+  { name: 'Airtime', icon: Smartphone, action: () => {} },
+  { name: 'Bills', icon: Lightbulb, action: () => {} },
+  { name: 'Scan QR', icon: QrCode, action: () => {} },
 ]
+const handleTransfer = () => {
+  if (auth.user?.isFrozen) {
+    alert('Account is frozen. You cannot transfer.')
+    return
+  }
+
+  router.push('/send')
+}
 
 /*
 |--------------------------------------------------------------------------

@@ -9,6 +9,7 @@ import Addcard from '@/views/AddCard.vue'
 import BankTransfer from '@/views/BankTransfer.vue'
 import TransactionsPage from '@/views/TransactionsPage.vue'
 import TransactionReceipt from '@/views/TransactionReceipt.vue'
+import AdminPage from '@/views/AdminPage.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -81,6 +82,12 @@ const router = createRouter({
       component: TransactionReceipt,
       meta: { requiresAuth: true },
     },
+    {
+      path: '/admin',
+      name: 'admin',
+      component: AdminPage,
+      meta: { requiresAuth: true, isAdmin: true },
+    }
   ],
 
   scrollBehavior() {
