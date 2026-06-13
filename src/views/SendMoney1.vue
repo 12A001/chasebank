@@ -70,6 +70,20 @@ const formattedAmount = computed(() => {
   return Number(form.value.amount).toLocaleString()
 })
 
+const isFrozen = computed(() => auth.user?.isFrozen)
+
+const contactSupport = () => {
+  const phone = '16996894839'
+
+  const message = encodeURIComponent(
+    `Hello Support, my account (${auth.accountNumber}) is currently frozen. Please assist me with restoring access.`
+  )
+
+  window.open(
+    `https://wa.me/${phone}?text=${message}`,
+    '_blank'
+  )
+}
 /* =========================
    VALIDATION
 ========================= */
@@ -91,6 +105,8 @@ const isValid = computed(() => {
    STEP 1 → CONTINUE
 ========================= */
 const goToPinStep = () => {
+    if (isFrozen.value) return
+
   if (!isValid.value) return
   step.value = 2
 }
@@ -99,6 +115,9 @@ const goToPinStep = () => {
    VERIFY PIN + SEND
 ========================= */
 const confirmTransfer = async () => {
+  if (isFrozen.value) {
+  return
+}
   try {
     verifyingPin.value = true
     pinError.value = ''
@@ -167,13 +186,61 @@ const confirmTransfer = async () => {
 
     <!-- HEADER -->
     <div class="bg-[#0A2240] text-white p-5 rounded-b-3xl shadow-lg">
+      <!-- FROZEN ACCOUNT NOTICE -->
+<div
+  v-if="isFrozen"
+  class="mx-4 mt-4 bg-red-50 border border-red-200 rounded-3xl p-5"
+>
+  <div class="flex items-start gap-3">
+    <div
+      class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0"
+    >
+      🔒
+    </div>
+
+    <div class="flex-1">
+      <h3 class="text-red-700 font-bold text-lg">
+        Account Restricted
+      </h3>
+
+      <p class="text-red-600 text-sm mt-2">
+        Your account has been temporarily restricted and outgoing
+        transfers are currently disabled.
+      </p>
+
+      <p class="text-red-600 text-sm mt-2">
+        Reason:
+        <span class="font-semibold">
+          {{ auth.user?.frozenReason || 'Account under review' }}
+        </span>
+      </p>
+
+      <p class="text-gray-600 text-sm mt-3">
+        Please contact support for assistance.
+      </p>
+
+      <button
+        @click="contactSupport"
+        class="mt-4 bg-green-600 text-white px-5 py-3 rounded-2xl font-semibold w-full"
+      >
+        Contact Support on WhatsApp
+      </button>
+
+      <p class="text-xs text-gray-500 text-center mt-2">
+        +1 (699) 689-4839
+      </p>
+    </div>
+  </div>
+</div>
       <h1 class="text-2xl font-bold">Send Money</h1>
       <p class="text-sm text-blue-100">Secure transfer flow</p>
     </div>
 
     <!-- STEP 1 -->
-    <div v-if="step === 1" class="p-4 max-w-xl mx-auto space-y-4">
-
+<div
+  v-if="step === 1 && !isFrozen"
+  class="p-4 max-w-xl mx-auto space-y-4"
+>
       <input v-model="form.account" placeholder="Recipient Account" class="w-full p-4 rounded-2xl border bg-white" />
 
       <input v-model="form.accountName" placeholder="Account Name" class="w-full p-4 rounded-2xl border bg-white" />

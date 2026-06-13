@@ -399,11 +399,6 @@ const quickActions = [
   { name: 'Scan QR', icon: QrCode, action: () => {} },
 ]
 const handleTransfer = () => {
-  if (auth.user?.isFrozen) {
-    alert('Account is frozen. You cannot transfer.')
-    return
-  }
-
   router.push('/send')
 }
 
