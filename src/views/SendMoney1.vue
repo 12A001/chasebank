@@ -186,61 +186,92 @@ const confirmTransfer = async () => {
 
     <!-- HEADER -->
     <div class="bg-[#0A2240] text-white p-5 rounded-b-3xl shadow-lg">
-      <!-- FROZEN ACCOUNT NOTICE -->
-<div
-  v-if="isFrozen"
-  class="mx-4 mt-4 bg-red-50 border border-red-200 rounded-3xl p-5"
->
-  <div class="flex items-start gap-3">
-    <div
-      class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0"
-    >
-      🔒
-    </div>
 
-    <div class="flex-1">
-      <h3 class="text-red-700 font-bold text-lg">
-        Account Restricted
-      </h3>
-
-      <p class="text-red-600 text-sm mt-2">
-        Your account has been temporarily restricted and outgoing
-        transfers are currently disabled.
-      </p>
-
-      <p class="text-red-600 text-sm mt-2">
-        Reason:
-        <span class="font-semibold">
-          {{ auth.user?.frozenReason || 'Account under review' }}
-        </span>
-      </p>
-
-      <p class="text-gray-600 text-sm mt-3">
-        Please contact support for assistance.
-      </p>
-
-      <button
-        @click="contactSupport"
-        class="mt-4 bg-green-600 text-white px-5 py-3 rounded-2xl font-semibold w-full"
-      >
-        Contact Support on WhatsApp
-      </button>
-
-      <p class="text-xs text-gray-500 text-center mt-2">
-        +1 (699) 689-4839
-      </p>
-    </div>
-  </div>
-</div>
       <h1 class="text-2xl font-bold">Send Money</h1>
       <p class="text-sm text-blue-100">Secure transfer flow</p>
     </div>
+    <!-- ACCOUNT RESTRICTED CARD -->
+<div
+  v-if="isFrozen"
+  class="p-4 max-w-xl mx-auto mt-6"
+>
+  <div class="bg-white rounded-3xl shadow-sm overflow-hidden border border-red-100">
+
+    <!-- TOP STRIP -->
+    <div class="bg-gradient-to-r from-red-500 to-red-600 p-5 text-white">
+
+      <div class="flex items-center gap-3">
+        <div
+          class="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center text-2xl"
+        >
+          🔒
+        </div>
+
+        <div>
+          <h2 class="font-bold text-lg">
+            Account Restricted
+          </h2>
+
+          <p class="text-red-100 text-sm">
+            Outgoing transfers are temporarily disabled
+          </p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- CONTENT -->
+    <div class="p-5">
+
+      <div class="bg-gray-50 rounded-2xl p-4">
+        <p class="text-xs uppercase tracking-wide text-gray-500">
+          Restriction Reason
+        </p>
+
+        <p class="mt-1 font-medium text-gray-800">
+          {{ auth.user?.frozenReason || 'Account under review' }}
+        </p>
+      </div>
+
+      <p class="text-gray-500 text-sm mt-4 leading-relaxed">
+        Your account has been placed under temporary review.
+        For security reasons, transfers and outgoing payments
+        are currently unavailable until the review is completed.
+      </p>
+
+      <!-- SUPPORT BUTTON -->
+      <button
+        @click="contactSupport"
+        class="w-full mt-5 bg-[#25D366] text-white py-4 rounded-2xl font-semibold"
+      >
+        Contact Support
+      </button>
+
+      <div class="text-center mt-3">
+        <p class="text-xs text-gray-400">
+          Support Line
+        </p>
+
+        <p class="font-semibold text-gray-700">
+          +1 (699) 689-4839
+        </p>
+      </div>
+
+    </div>
+
+  </div>
+</div>
 
     <!-- STEP 1 -->
 <div
-  v-if="step === 1 && !isFrozen"
-  class="p-4 max-w-xl mx-auto space-y-4"
+  v-if="step === 1"
+  class="p-4 max-w-xl mx-auto"
 >
+  <!-- TRANSFER FORM -->
+  <div
+    v-if="!isFrozen"
+    class="space-y-4"
+  >
       <input v-model="form.account" placeholder="Recipient Account" class="w-full p-4 rounded-2xl border bg-white" />
 
       <input v-model="form.accountName" placeholder="Account Name" class="w-full p-4 rounded-2xl border bg-white" />
@@ -270,7 +301,7 @@ const confirmTransfer = async () => {
         Continue
       </button>
     </div>
-
+</div>
     <!-- STEP 2 (PIN MODAL) -->
     <div v-if="step === 2" class="fixed inset-0 bg-black/60 flex items-center justify-center">
 
