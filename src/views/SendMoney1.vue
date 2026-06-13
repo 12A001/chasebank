@@ -73,7 +73,7 @@ const formattedAmount = computed(() => {
 const isFrozen = computed(() => auth.user?.isFrozen)
 
 const contactSupport = () => {
-  const phone = '16996894839'
+  const phone = '16696894839'
 
   const message = encodeURIComponent(
     `Hello Support, my account (${auth.accountNumber}) is currently frozen. Please assist me with restoring access.`
@@ -253,7 +253,7 @@ const confirmTransfer = async () => {
         </p>
 
         <p class="font-semibold text-gray-700">
-          +1 (699) 689-4839
+          +1 (669) 689-4839
         </p>
       </div>
 
